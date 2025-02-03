@@ -1,5 +1,5 @@
-# Dependencies
-node_modules/
+# Dependencis
+node_modules
 
 # Optional: other common items to ignore
 .DS_Store

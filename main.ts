@@ -1,11 +1,19 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, Notice } from 'obsidian';
 import { OneDriveClient } from './onedrive-client';
+import { OneDriveFileModal } from './file-browser-modal';
 
 interface OneDrivePluginSettings {
     clientId: string;
     clientSecret: string;
     refreshToken: string;
     syncInterval: number;
+}
+
+const DEFAULT_SETTINGS: OneDrivePluginSettings = {
+    clientId: '',
+    clientSecret: '',
+    refreshToken: '',
+    syncInterval: 30
 }
 
 class OneDriveSettingTab extends PluginSettingTab {
@@ -66,13 +74,6 @@ class OneDriveSettingTab extends PluginSettingTab {
     }
 }
 
-const DEFAULT_SETTINGS: OneDrivePluginSettings = {
-    clientId: '',
-    clientSecret: '',
-    refreshToken: '',
-    syncInterval: 30
-}
-
 export default class OneDrivePlugin extends Plugin {
     settings: OneDrivePluginSettings;
     client: OneDriveClient;
@@ -80,19 +81,52 @@ export default class OneDrivePlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
+        // Initialize OneDrive client
+        this.client = new OneDriveClient(
+            this.settings.clientId,
+            this.settings.clientSecret,
+            this.settings.refreshToken
+        );
+
+        // Test OneDrive connection and list files
+        try {
+            await this.client.initialize();
+            const files = await this.client.listFiles('/');
+            console.log('Files in root:', files);
+            new Notice('Successfully connected to OneDrive');
+        } catch (error) {
+            console.error('Failed to initialize OneDrive client:', error);
+            new Notice('Failed to connect to OneDrive. Check your credentials.');
+        }
+
         // Add settings tab
         this.addSettingTab(new OneDriveSettingTab(this.app, this));
 
         // Add ribbon icon
-        this.addRibbonIcon('folder', 'OneDrive Manager', () => {
-            // Open OneDrive file browser
-            this.openFileBrowser();
+        this.addRibbonIcon('folder', 'OneDrive Manager', async () => {
+            try {
+                await this.openFileBrowser();
+            } catch (error) {
+                console.error('Error opening file browser:', error);
+                new Notice('Error opening OneDrive file browser');
+            }
         });
 
         // Register file sync interval
         this.registerInterval(
-            window.setInterval(() => this.syncFiles(), this.settings.syncInterval * 1000)
+            window.setInterval(async () => {
+                try {
+                    await this.syncFiles();
+                } catch (error) {
+                    console.error('Error during sync:', error);
+                    new Notice('OneDrive sync failed');
+                }
+            }, this.settings.syncInterval * 1000)
         );
+    }
+
+    onunload() {
+        console.log('Unloading OneDrive plugin');
     }
 
     async loadSettings() {
@@ -104,10 +138,19 @@ export default class OneDrivePlugin extends Plugin {
     }
 
     private async syncFiles() {
-        // Implement file synchronization logic
+        try {
+            const files = await this.client.listFiles('/');
+            console.log('Synced files:', files);
+            // TODO: Implement full sync logic
+            new Notice(`Synced ${files.length} files from OneDrive`);
+        } catch (error) {
+            console.error('Sync failed:', error);
+            new Notice('Failed to sync with OneDrive');
+        }
     }
 
     private async openFileBrowser() {
-        // Implement file browser UI
+        const modal = new OneDriveFileModal(this.app, this);
+        modal.open();
     }
 }
