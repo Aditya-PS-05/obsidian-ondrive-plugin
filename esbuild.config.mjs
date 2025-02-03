@@ -9,7 +9,7 @@ if you want to view the source, please visit the github repository of this plugi
 */
 `;
 
-const prod = process.argv[2] === "production";
+const prod = (process.argv[2] === "production");
 
 const context = await esbuild.context({
 	banner: {
@@ -38,6 +38,7 @@ const context = await esbuild.context({
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
 	outfile: "main.js",
+	minify: prod,
 });
 
 if (prod) {

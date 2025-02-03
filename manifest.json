@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "minAppVersion": "0.15.0",
     "description": "Manage and link OneDrive files directly in Obsidian",
-    "author": "Your Name",
-    "isDesktopOnly": false,
-    "authorUrl": "https://your-website.com"
+    "author": "Aditya Pratap Singh",
+    "isDesktopOnly": true,
+    "authorUrl": "https://github.com/Aditya-PS-05"
   }
