@@ -1,10 +1,14 @@
 {
-    "id": "obsidian-onedrive-manager",
-    "name": "OneDrive Manager",
-    "version": "1.0.0",
-    "minAppVersion": "0.15.0",
-    "description": "Manage and link OneDrive files directly in Obsidian",
-    "author": "Aditya Pratap Singh",
-    "isDesktopOnly": true,
-    "authorUrl": "https://github.com/Aditya-PS-05"
+  "id": "obsidian-onedrive-manager",
+  "name": "OneDrive Manager",
+  "version": "1.1.0",
+  "minAppVersion": "0.15.0",
+  "description": "Manage and link OneDrive files directly in Obsidian",
+  "author": "Aditya Pratap Singh",
+  "isDesktopOnly": true,
+  "authorUrl": "https://github.com/Aditya-PS-05", 
+  "fundingUrl": {
+      "Buy Me a Coffee": "https://buymeacoffee.com/adityaprata",
+      "GitHub Sponsor": "https://github.com/sponsors/Aditya-PS-05"
   }
+}
